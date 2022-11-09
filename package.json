@@ -1,0 +1,14 @@
+{
+  "name": "demo",
+  "file": "zepto",
+  "version": "0.1.0",
+  "description": "demo",
+  "license": "MIT",
+  "devDependencies": {
+    "grunt": "~0.4.1"
+  },
+  "dependencies": {
+    "express": "3.x",
+    "grunt-contrib-htmlmin": "^2.0.0"
+  }
+}

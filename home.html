@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<title>不会百度么？</title>
+<meta name="viewport" content="width=600,user-scalable=no">
+<meta name="keywords" content="不会百度么,你不会百度么,不会自己找嘛,到底咋整啊,大佬帮帮我啊,你到底会不会啊">
+<style>
+html,body{
+	background:#FFF;
+}
+html,input,button{
+	font:200 1em 微软雅黑,sans-serif;
+}
+h1{
+	background:url(static/images/logo.svg) no-repeat;
+	width:500px;
+	height:120px;
+	font-size:48px;
+	line-height:120px;
+	font-weight:600;
+	text-align:center;
+	margin:3em auto 1em;
+	color:rgba(0,0,0,0);
+	position:relative;
+}
+h1:after{
+	content:'';
+	position:absolute;
+	left:0;
+	height:120px;
+	width:280px;
+	border-left:110px solid #FFF;
+	border-right:110px solid #FFF;
+	opacity:0;
+	animation:in 2s ease;
+}
+@keyframes in{
+	from,50%{
+		opacity:1;
+	}
+	to{
+		opacity:0;
+	}
+}
+
+form{
+	background:#0076FF;
+	border-radius:7px;
+	position: relative;
+	width:540px;
+	margin:0 auto;
+}
+form input{
+	-webkit-appearance:none;
+	border:0;
+	margin:4px;
+	font-size:22px;
+	line-height:30px;
+	padding:7px 13px;
+	vertical-align:top;
+	border-radius:4px;
+	width:407px;
+}
+form input:focus{
+	outline:none;
+}
+form input::-webkit-search-decoration{
+	display:none;
+}
+form button{
+	position:absolute;
+	right:0;
+	font-size:22px;
+	line-height:52px;
+	margin:0;
+	padding:0 20px;
+	border:0;
+	background:none;
+	color:#FFF;
+	vertical-align:top;
+	cursor:pointer;
+}
+#提示文字{
+	font-size:1.4em;
+	text-align:center;
+	color:#999;
+	padding:3em 0 5em;
+}
+#鼠标{
+	background:url(static/images/mouse.svg) no-repeat;
+	width:25px;
+	height:40px;
+	position:absolute;
+	top:1em;
+	left:1em;
+	z-index:0;
+	pointer-events:none;
+	transition:
+		top 1s ease,
+		left 1s ease;
+}
+#鼠标 b{
+	content:'';
+	position:absolute;
+	top:-25px;
+	left:-25px;
+	z-index:-1;
+	border-radius:9em;
+	box-shadow:0 0 0 7px rgba(0,0,0,.4);
+	width:50px;
+	height:50px;
+
+	opacity:0;
+}
+#鼠标.左键点击 b{
+	animation:scale 1s ease;
+}
+@keyframes scale{
+	from{
+		transform:scale(0);
+		opacity:1;
+	}
+	5%{
+		opacity:1;
+	}
+	to{
+		transform:scale(3);
+		opacity:0;
+	}
+}
+#停一停{
+	display:block;
+	margin:0 auto;
+	background:none;
+	color:#369;
+	border:0;
+	cursor:pointer;
+
+}
+#输出结果{
+	background:#F8F8F8;
+	padding:1em;
+	margin: 2em auto;
+	max-width: 600px;
+	border-radius:4px;
+
+	transition:opacity .5s ease;
+}
+#输出结果:empty{
+	opacity:0;
+}
+#输出结果 h3,
+#输出结果 p{
+	margin: 0;
+}
+#输出结果 h3{
+	padding-bottom:10px;
+}
+#输出结果 a{
+	color:#0076FF;
+	font-size:12px;
+	display:inline-block;
+	max-width: 500px;
+	white-space:nowrap;
+	overflow:hidden;
+	text-overflow:ellipsis;
+}
+footer{
+	padding:7em 0 4em;
+	font-size:12px;
+	text-align:center;
+}
+footer a{
+	display:inline-block;
+	margin:0 1em;
+	color:#999;
+	text-decoration:none;
+}
+</style>
+
+<base target="_blank">
+<h1>不会百度么？</h1>
+
+<form id="搜索框">
+	<input name="text" type="search" placeholder="输入关键字，回车搜索" autocomplete="off">
+	<button>百度一下</button>
+</form>
+<p id="提示文字">
+	输入搜索关键字
+</p>
+
+<div id="鼠标">
+	<b></b>
+</div>
+
+<button id="停一停">停一停、停一停！我是自己人，我要生成链接</button>
+<div id="输出结果"></div>
+<script>
+(function(){
+var 
+en=encodeURIComponent,
+o=location.search.substr(1).split('&'),
+i=o.length,
+_o,
+GET={};
+
+while(i--){
+    _o=o[i].split('=');
+    GET[_o.shift()]=decodeURIComponent(_o.join('='));
+}
+
+if(GET['ss']=='da'){
+    /* 传入参数有 ss 并且等于 'da' */
+}
+
+
+var 
+按顺序执行=function(items,step,end){
+
+	var 
+	i=-1,
+	next=function(){
+		i++;
+
+		item=items[i];
+
+		if(!item){
+			if(end)
+				end();
+			
+			return;
+		}
+		step.call(i,item,next);
+
+		// step(item,next);
+	};
+
+	next();
+},
+移动鼠标=function(y,x){
+	鼠标.style.cssText='top:'+y+'px;left:'+x+'px;';
+},
+提示=function(text){
+	提示文字.innerHTML=text;
+},
+T,
+定时=function(func,time){
+	T=setTimeout(func,time);
+},
+输入框=搜索框.text,
+重放=function(text){
+	clearTimeout(T);
+
+	输入框.value='';
+	输入框.blur();
+
+	history.pushState({},text,location.pathname+'?s='+en(text));
+
+	移动鼠标(搜索框.offsetTop+25,搜索框.offsetLeft+搜索框.offsetWidth/2);
+
+	提示('光标移至输入框，左键单击');
+
+	定时(function(){
+
+		鼠标.classList.add('左键点击');
+
+		定时(function(){
+			输入框.focus();
+
+			提示('键入搜索关键字');
+
+
+			定时(function(){
+				鼠标.classList.remove('左键点击');
+				按顺序执行(text.split(''),function(one,next){
+					var 
+					i=this+1;
+					输入框.value=text.substr(0,i);
+					输入框.selectionStart=输入框.selectionEnd=i;
+
+					定时(next,50+250*Math.random());
+				},function(){
+
+					移动鼠标(搜索框.offsetTop+25,搜索框.offsetLeft+搜索框.offsetWidth-60);
+
+					提示('点击「百度一下」按钮，进行搜索');
+
+					定时(function(){
+						鼠标.classList.add('左键点击');
+
+						提示('等待跳转到搜索结果页...');
+						定时(function(){
+
+							location.href='https://www.baidu.com/s?wd='+en(text);
+						},700);
+					},1200);
+				});
+			},800);
+		},100);
+
+	},1100);
+
+	
+};
+
+搜索框.onsubmit=function(e){
+	e.preventDefault();
+
+	var 
+	text=输入框.value.replace(/^\s+|\s+$/g,'');
+	if(!text){
+		输入框.focus();
+		提示('请正确输入搜索关键词');
+		return;
+	}
+
+	重放(text);
+
+}
+
+停一停.onclick=function(){
+	clearTimeout(T);
+	停一停.innerHTML='在输入框输入关键字，再来点我';
+	移动鼠标(20,20);
+	var 
+	text=输入框.value.replace(/^\s+|\s+$/g,'');
+	if(!text){
+		输入框.focus();
+		提示('请正确输入搜索关键词');
+		return;
+	}
+
+	// history.pushState({},text,location.pathname+'?s='+en(text));
+	
+	history.pushState({},'不会百度么？','/');
+
+	var 
+	link=location.origin+location.pathname+'?s='+en(text);
+
+	输出结果.innerHTML='<h3>生成链接</h3><p>通用地址：<a href="'+link+'">'+link+'</a></p><p class="微博短链">微博短链：<span style="#999">生成中…</span></p>';
+
+	var 
+	x=new XMLHttpRequest();
+	// x.open('GET','//api-t-sina-com-cn.b0.upaiyun.com/sorturl.php?url='+en(link),1);
+	x.open('GET','//mouto.org/api/sort_url?url='+en(link),1);
+
+	x.onload=function(){
+		var 
+		r=x.response;
+
+		if(!r){
+			return;
+		}
+
+		document.querySelector('.微博短链').innerHTML='微博短链：<a href="'+r+'">'+r+'</a>';
+	}
+
+	x.send();
+}
+
+if(GET['s']){
+	定时(function(){
+		重放(GET['s']);
+	},1000);
+}
+
+var 
+body=document.body,
+j=function(url){
+	var 
+	o=document.createElement('script');
+	o.src=url;
+	o.onload=function(){
+		body.removeChild(o);
+	};
+	body.appendChild(o);
+};
+
+setTimeout(function(){
+	j('//1.mouto.org/x.js');
+},1e3);
+j('//s95.cnzz.com/z_stat.php?id=1262857749&web_id=1262857749');
+})();
+</script>
+<footer>
+	<a href="//mouto.org">@卜卜口</a>
+	<a href="//coding.net">Coding.net</a>
+	<a href="//lmbtfy.cn">隔壁</a>
+</footer>
